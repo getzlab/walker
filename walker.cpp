@@ -2,6 +2,12 @@
 
 // lots of this code derived from rrBAM
 
+#define CLAMPH(x, high) (((x) > (high)) ? (high) : (x))
+
+// pack high 32 bits of nonref_pos output
+#define PACK_NRP_HI(type, length, readpos) ((uint64_t) (((((type) << 14) \
+| (CLAMPH((length), 0x3FFF) & 0x3FFF)) << 16) | ((CLAMPH(readpos, 0xFFFF)) & 0xFFFF)) << 32)
+
 using namespace std;
 
 namespace walker {
@@ -28,8 +34,12 @@ bool walker::EDz(const SeqLib::BamRecord& record) {
    return record.GetIntTag("NM", nm) ? nm == 0 : true;
 }
 
-vector<uint32_t> walker::nonref_pos(const SeqLib::BamRecord& record) { // {{{
-   vector<uint32_t> output;
+vector<uint64_t> walker::nonref_pos(const SeqLib::BamRecord& record) { // {{{
+   // lower 32 bits contain absolute reference position of mismatch
+   // high 32 bits contain: 
+   // - lower 16: position along the read of mismatch
+   // - upper 16: 2 bits for CIGAR op (as defined in sam.h), 14 bits for op. length
+   vector<uint64_t> output;
 
    // query reference over this read
 
@@ -54,7 +64,7 @@ vector<uint32_t> walker::nonref_pos(const SeqLib::BamRecord& record) { // {{{
 	 case 'M' :
 	    for(int i = 0; i < c_f.Length(); i++) {
 	       if(ror[refpos] != readseq[readpos]) {
-		  output.push_back(record.PositionWithSClips() + refpos);
+		  output.push_back((record.PositionWithSClips() + refpos) | PACK_NRP_HI(0, 1, readpos));
 	       }
 	       readpos++;
 	       refpos++;
@@ -72,14 +82,14 @@ vector<uint32_t> walker::nonref_pos(const SeqLib::BamRecord& record) { // {{{
 	 // these operators consume bases over the ref but not the read
 	 case 'D' :
 	 case 'N' : 
-	    output.push_back(record.PositionWithSClips() + refpos);
+	    output.push_back((record.PositionWithSClips() + refpos) | PACK_NRP_HI(c_f.RawType(), c_f.Length(), readpos));
 	    refpos += c_f.Length();
 
 	    break;
 
 	 // this operator consumes bases over the read but not the ref
 	 case 'I' :
-	    output.push_back(record.PositionWithSClips() + refpos);
+	    output.push_back((record.PositionWithSClips() + refpos) | PACK_NRP_HI(c_f.RawType(), c_f.Length(), readpos));
 	    readpos += c_f.Length();
 
 	    break;

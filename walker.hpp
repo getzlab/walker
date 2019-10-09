@@ -51,7 +51,7 @@ class walker {
 
    /* Get all genomic positions in read not matching reference
     */
-   virtual vector<uint32_t> nonref_pos(const SeqLib::BamRecord& record);
+   virtual vector<uint64_t> nonref_pos(const SeqLib::BamRecord& record);
 
    /* iterators */
    virtual void walk() { return; } // start-to-end
