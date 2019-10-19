@@ -99,4 +99,23 @@ vector<uint64_t> walker::nonref_pos(const SeqLib::BamRecord& record) { // {{{
    return output;
 } // }}}
 
+void walker::print_status() {
+   if(n_reads == 0) {
+      time_last = chrono::steady_clock::now();
+      return;
+   }
+
+   // count reads per second
+   time_now = chrono::steady_clock::now();
+   double RPS = ((double) (n_reads - n_reads_last)) /
+                chrono::duration_cast<chrono::duration<double>>(time_now - time_last).count();
+   n_reads_last = n_reads;
+   time_last = chrono::steady_clock::now();
+
+   // print status
+   fprintf(stderr, "%d:%d (%0.2f r/s)\n", cur_read.ChrID(), cur_read.Position(), RPS);
+
+   return;
+}
+
 }

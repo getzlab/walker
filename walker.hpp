@@ -9,6 +9,7 @@
 
 #include <string>
 #include <vector>
+#include <chrono>
 
 namespace walker {
 
@@ -58,20 +59,29 @@ class walker {
    virtual void walk(SeqLib::GenomicRegion) { return; } // single region
    virtual void walk(SeqLib::GenomicRegionCollection<>) { return; } // multiple region
 
+   /* print current status:
+      - current position of this.reader
+      - number of reads per second consumed since print_status() was last called
+    */
+   void print_status();
+
    /* constructors */
    walker(const string& bam_in, const string& ref_fa);
 
    // members
 
    protected:
+   // SeqLib objects
    SeqLib::BamReader reader;
    SeqLib::BamHeader header;
    SeqLib::BamRecord cur_read;
-   //multimap<uint32_t, r_read> read_ends;
-   //set<uint32_t> nonref_poses;
    SeqLib::RefGenome reference;
-   //string output_stem;
-   //uint32_t num_pileups_dumped;
+
+   // total number of reads consumed (now, at previous query)
+   uint64_t n_reads = 0, n_reads_last = 0;
+
+   // timers (now, at previous query)
+   chrono::steady_clock::time_point time_now, time_last;
 };
 
 }
