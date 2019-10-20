@@ -22,7 +22,7 @@ namespace walker {
 template<class T = uint64_t, size_t S = 1000>
 class static_circbuf {
    public:
-   T at(uint64_t pos) {
+   T& at(uint64_t pos) {
       return buffer[pos % size];
    }
 
