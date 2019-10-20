@@ -23,15 +23,15 @@ template<class T = uint64_t, size_t S = 1000>
 class static_circbuf {
    public:
    T& at(uint64_t pos) {
-      return buffer[pos % size];
+      return buffer[pos % S];
    }
 
    void insert(uint64_t pos, T val) {
-      buffer[pos % size] = val;
+      buffer[pos % S] = val;
    }
 
-   void del(uint64_t pos) {
-      buffer[pos % size] = T();
+   void erase(uint64_t pos) {
+      buffer[pos % S] = T();
    }
 
    static_circbuf() : buffer() {}
