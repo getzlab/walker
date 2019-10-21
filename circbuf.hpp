@@ -19,19 +19,19 @@ namespace walker {
 
 // TODO: make these all operators. make virtual where useful.
 //       collision checking?
-template<class T = uint64_t, size_t S = 1000>
+template<class T = uint64_t, uint8_t POW = 10>
 class static_circbuf {
    public:
    T& at(uint64_t pos) {
-      return buffer[pos % S];
+      return buffer[pos & mask];
    }
 
    void insert(uint64_t pos, T val) {
-      buffer[pos % S] = val;
+      buffer[pos & mask] = val;
    }
 
    void erase(uint64_t pos) {
-      buffer[pos % S] = T();
+      buffer[pos & mask] = T();
    }
 
    static_circbuf() : buffer() {}
@@ -39,8 +39,9 @@ class static_circbuf {
    //virtual bool equals(uint64_t pos, T val); // TODO: make this an operator
 
    protected:
-   uint64_t size {S};
-   T buffer[S];
+   uint64_t size {1 << POW};
+   uint64_t mask {(1 << POW) - 1};
+   T buffer[1 << POW];
 };
 
 }
