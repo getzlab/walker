@@ -62,6 +62,15 @@ vector<uint64_t> walker::nonref_pos(const SeqLib::BamRecord& record) { // {{{
 	 /* this operator consumes bases over the ref and read
 	  */
 	 case 'M' :
+	    /*   IDEA: since we expect the set of mismatches to be sparse,
+	               rather than comparing each byte at a time, can we 
+	               cast pointer to int64, bitwise xor read and reference,
+	               and compare 8 bytes at a time?
+	               
+	               could potentially be even faster if we do a binary search
+	               for nonzero xor'd bits through the int64, rather than 
+	               always iterating over all 8 bytes
+	     */
 	    for(int i = 0; i < c_f.Length(); i++) {
 	       if(ror[refpos] != readseq[readpos]) {
 		  output.push_back((record.PositionWithSClips() + refpos) | PACK_NRP_HI(0, 1, readpos));
