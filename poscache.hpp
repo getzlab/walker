@@ -15,6 +15,10 @@ class pos_cache : public static_circbuf<struct pileup<T>> {
       return this->at(pos).pos == pos;
    }
 
+   void insert(uint64_t pos, T val) {
+      static_circbuf<struct pileup<T>>::insert(pos, (struct pileup<T>) { pos, val });
+   }
+
    T& at(uint64_t pos) {
       return this->at(pos).contents;
    }
