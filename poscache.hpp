@@ -12,7 +12,7 @@ template<class T>
 class pos_cache : public static_circbuf<struct pileup<T>> {
    public:
    bool contains(uint64_t pos) {
-      return this->at(pos).pos == pos;
+      return static_circbuf<struct pileup<T>>::at(pos).pos == pos;
    }
 
    void insert(uint64_t pos, T val) {
@@ -20,7 +20,7 @@ class pos_cache : public static_circbuf<struct pileup<T>> {
    }
 
    T& at(uint64_t pos) {
-      return this->at(pos).contents;
+      return static_circbuf<struct pileup<T>>::at(pos).contents;
    }
 };
 
