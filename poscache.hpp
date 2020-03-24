@@ -4,7 +4,7 @@ namespace walker {
 
 template<class T>
 struct pileup {
-   uint32_t pos;
+   uint64_t pos;
    T contents;
 };
 
