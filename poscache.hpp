@@ -3,13 +3,13 @@
 namespace walker {
 
 template<class T>
-typedef struct p {
+struct pileup {
    uint32_t pos;
    T contents;
-} pileup_t;
+};
 
 template<class T>
-class pos_cache : public walker::static_circbuf<pileup_t<T>> {
+class pos_cache : public static_circbuf<struct pileup<T>> {
    public:
    bool contains(uint64_t pos) {
       return this->at(pos).pos == pos;
@@ -18,6 +18,6 @@ class pos_cache : public walker::static_circbuf<pileup_t<T>> {
    T& at(uint64_t pos) {
       return this->at(pos).contents;
    }
-}
+};
 
 }
