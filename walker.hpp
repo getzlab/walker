@@ -51,6 +51,11 @@ class walker {
    static bool EDz(const SeqLib::BamRecord& record);
 
    /* Get all genomic positions in read not matching reference
+     * @return lower 32 bits contain absolute reference position of mismatch
+     *         high 32 bits contain: 
+     *           - lower 16: position along the read of mismatch
+     *           - upper 16: 2 bits for CIGAR op (as defined in sam.h), 14 bits
+     *             for op. length (clamped at 2^14 = 16384)
     */
    virtual vector<uint64_t> nonref_pos(const SeqLib::BamRecord& record);
 
