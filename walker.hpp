@@ -55,9 +55,20 @@ class walker {
    virtual vector<uint64_t> nonref_pos(const SeqLib::BamRecord& record);
 
    /* iterators */
-   virtual void walk() { return; } // start-to-end
-   virtual void walk(SeqLib::GenomicRegion) { return; } // single region
-   virtual void walk(SeqLib::GenomicRegionCollection<>) { return; } // multiple region
+   virtual void walk(); // start-to-end
+   virtual void walk(SeqLib::GenomicRegion) { } // single region
+   virtual void walk(SeqLib::GenomicRegionCollection<>) { } // multiple region
+   virtual void walk(uint8_t*) { } // binary position list
+
+   /** Function to apply to each read in iterator
+    *  @return Return false if iterator should break; true otherwise
+    */
+   virtual bool walk_apply(const SeqLib::BamRecord& record) { return false };
+
+   /** Check if read has edit distance zero (excluding clipped bases)
+    *  @return Return true if read fails any filters; false otherwise
+    */
+   virtual bool filter_read(const SeqLib::BamRecord& record);
 
    /* print current status:
       - current position of this.reader

@@ -108,6 +108,34 @@ vector<uint64_t> walker::nonref_pos(const SeqLib::BamRecord& record) { // {{{
    return output;
 } // }}}
 
+//
+// default iterators {{{
+
+void walk() {
+   while(reader.GetNextRecord(cur_read)) {
+      // apply default filters
+      if(filter_read(cur_read)) continue;
+
+      // apply user-specified action to cur_read
+      if(!walk_apply(cur_read)) break;
+   }
+}
+
+// }}}
+
+bool walker::filter_read(const SeqLib::BamRecord& record) {
+   // skip if this read is unmapped
+   if(!cur_read.MappedFlag()) return true;
+
+   // skip if this read is vendor fail
+   if(cur_read.QCFailFlag()) return true;
+
+   // skip if read is MQZ
+   if(cur_read.MapQuality() == 0) return true;
+
+   return false;
+}
+
 void walker::print_status() {
    if(n_reads == 0) {
       time_last = chrono::steady_clock::now();
