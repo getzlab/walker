@@ -76,6 +76,12 @@ class walker {
     */
    virtual bool walk_apply(const SeqLib::BamRecord& record) { return false };
 
+   /** Increment current position, accounting for chromosome boundaries
+    *  @parameter curchr: current chromosome index (with respect to header order)
+    *  @parameter curpos: position within chromosome
+    */
+   void increment_pos(uint16_t& curchr, uint32_t& curpos);
+
    /** Check if read has edit distance zero (excluding clipped bases)
     *  @return Return true if read fails any filters; false otherwise
     */

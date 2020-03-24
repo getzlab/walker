@@ -123,6 +123,14 @@ void walk() {
 
 // }}}
 
+void increment_pos(uint16_t& curchr, uint32_t& curpos) {
+   // TODO: ensure that curchr isn't out of bounds
+   if(curpos > header.GetSequenceLength(curchr) - 1) {
+      curchr++;
+      curpos = 0;
+   } else curpos++;
+}
+
 bool walker::filter_read(const SeqLib::BamRecord& record) {
    // skip if this read is unmapped
    if(!cur_read.MappedFlag()) return true;
