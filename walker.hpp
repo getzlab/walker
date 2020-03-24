@@ -55,10 +55,16 @@ class walker {
    virtual vector<uint64_t> nonref_pos(const SeqLib::BamRecord& record);
 
    /* iterators */
+
+   // 1. we're interested in all positions
    virtual void walk(); // start-to-end
    virtual void walk(SeqLib::GenomicRegion) { } // single region
    virtual void walk(SeqLib::GenomicRegionCollection<>) { } // multiple region
-   virtual void walk(uint8_t*) { } // binary position list
+
+   // 2. we're only interested in positions intersecting a position list
+   virtual void walk(uint8_t*) { } // start-to-end
+   virtual void walk(SeqLib::GenomicRegion, uint8_t*) { } // single region
+   virtual void walk(SeqLib::GenomicRegionCollection<>, uint8_t*) { } // multiple region
 
    /** Function to apply to each read in iterator
     *  @return Return false if iterator should break; true otherwise
