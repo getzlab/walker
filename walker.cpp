@@ -111,7 +111,7 @@ vector<uint64_t> walker::nonref_pos(const SeqLib::BamRecord& record) { // {{{
 //
 // default iterators {{{
 
-void walk() {
+void walker::walk() {
    while(reader.GetNextRecord(cur_read)) {
       // apply default filters
       if(filter_read(cur_read)) continue;
@@ -123,7 +123,7 @@ void walk() {
 
 // }}}
 
-void increment_pos(uint16_t& curchr, uint32_t& curpos) {
+void walker::increment_pos(uint16_t& curchr, uint32_t& curpos) {
    // TODO: ensure that curchr isn't out of bounds
    if(curpos > header.GetSequenceLength(curchr) - 1) {
       curchr++;

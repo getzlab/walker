@@ -74,7 +74,7 @@ class walker {
    /** Function to apply to each read in iterator
     *  @return Return false if iterator should break; true otherwise
     */
-   virtual bool walk_apply(const SeqLib::BamRecord& record) { return false };
+   virtual bool walk_apply(const SeqLib::BamRecord& record) { return false; };
 
    /** Increment current position, accounting for chromosome boundaries
     *  @parameter curchr: current chromosome index (with respect to header order)
