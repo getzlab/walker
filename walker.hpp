@@ -87,9 +87,9 @@ class walker {
     */
    virtual bool filter_read(const SeqLib::BamRecord& record);
 
-   /* print current status:
-      - current position of this.reader
-      - number of reads per second consumed since print_status() was last called
+   /** Print current status:
+    *  - Current position of this.reader
+    *  - Number of reads per second consumed since print_status() was last called
     */
    void print_status();
 

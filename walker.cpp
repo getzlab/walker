@@ -113,6 +113,10 @@ vector<uint64_t> walker::nonref_pos(const SeqLib::BamRecord& record) { // {{{
 
 void walker::walk() {
    while(reader.GetNextRecord(cur_read)) {
+      // get stats
+      if(!(n_reads % 100000)) print_status();
+      n_reads++;
+
       // apply default filters
       if(filter_read(cur_read)) continue;
 
