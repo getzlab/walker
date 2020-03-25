@@ -141,13 +141,19 @@ void walker::increment_pos(uint16_t& curchr, uint32_t& curpos) {
 
 bool walker::filter_read(const SeqLib::BamRecord& record) {
    // skip if this read is unmapped
-   if(!cur_read.MappedFlag()) return true;
+   if(!record.MappedFlag()) return true;
 
    // skip if this read is vendor fail
-   if(cur_read.QCFailFlag()) return true;
+   if(record.QCFailFlag()) return true;
+
+   // skip if read is a duplicate
+   if(record.DuplicateFlag()) return true;
+
+   // skip if read is not primary
+   if(record.shared_pointer().get()->core.flag & 0x900) return true;
 
    // skip if read is MQZ
-   if(cur_read.MapQuality() == 0) return true;
+   if(record.MapQuality() == 0) return true;
 
    return false;
 }
