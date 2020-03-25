@@ -13,6 +13,8 @@
 
 namespace walker {
 
+using namespace std;
+
 // taken from BWA's bntseq.c (Heng Li)
 static const uint8_t pack_2bit[256] = {
    4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4, 
@@ -39,8 +41,6 @@ static const uint8_t nyb_to_2bit[16] = {4, 0, 1, 4,   /* A C */
 					2, 4, 4, 4,   /* G */
 					3, 4, 4, 4,   /* T */
 					4, 4, 4, 4};  /* N */
-
-using namespace std;
 
 class walker {
    public:
