@@ -29,6 +29,10 @@ walker::walker(const string& bam_in, const string& ref_fa) {
    }
 }
 
+walker::~walker() {
+   if(outfile != NULL) fclose(outfile);
+}
+
 bool walker::EDz(const SeqLib::BamRecord& record) {
    int32_t nm;
    return record.GetIntTag("NM", nm) ? nm == 0 : true;

@@ -100,6 +100,7 @@ class walker {
 
    /* constructors */
    walker(const string& bam_in, const string& ref_fa);
+   ~walker();
 
    // members
 
@@ -111,7 +112,7 @@ class walker {
    SeqLib::RefGenome reference;
 
    // output file
-   FILE* outfile;
+   FILE* outfile = NULL;
 
    // total number of reads consumed (now, at previous query)
    uint64_t n_reads = 0, n_reads_last = 0;
