@@ -167,4 +167,17 @@ void walker::print_status() {
    return;
 }
 
+bool walker::set_output_file(const string& outfile) {
+   if(outfile == "-") this->outfile = stdout;
+   else {
+      this->outfile = fopen(outfile.c_str(), "w");
+      if(!this->outfile) {
+	 fprintf(stderr, "Could not open output file for writing!\n");
+	 return 0;
+      }
+   }
+
+   return 1;
+}
+
 }

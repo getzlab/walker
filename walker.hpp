@@ -93,6 +93,11 @@ class walker {
     */
    void print_status();
 
+   /** Set current output file
+    *  @parameter String pointing to output file (or "-" for stdout)
+    */
+   bool set_output_file(const string& outfile);
+
    /* constructors */
    walker(const string& bam_in, const string& ref_fa);
 
@@ -104,6 +109,9 @@ class walker {
    SeqLib::BamHeader header;
    SeqLib::BamRecord cur_read;
    SeqLib::RefGenome reference;
+
+   // output file
+   FILE* outfile;
 
    // total number of reads consumed (now, at previous query)
    uint64_t n_reads = 0, n_reads_last = 0;
