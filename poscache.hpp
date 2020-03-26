@@ -1,3 +1,6 @@
+#ifndef POSCACHE_GUARD
+#define POSCACHE_GUARD
+
 #include "circbuf.hpp"
 
 namespace walker {
@@ -25,3 +28,5 @@ class pos_cache : public static_circbuf<struct pileup<T>> {
 };
 
 }
+
+#endif
