@@ -133,7 +133,7 @@ void walker::walk() {
 
 void walker::increment_pos(uint16_t& curchr, uint32_t& curpos) {
    // TODO: ensure that curchr isn't out of bounds
-   if(curpos > header.GetSequenceLength(curchr) - 1) {
+   if(curpos >= header.GetSequenceLength(curchr) - 1) {
       curchr++;
       curpos = 0;
    } else curpos++;
