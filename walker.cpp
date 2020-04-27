@@ -39,10 +39,16 @@ bool walker::EDz(const SeqLib::BamRecord& record) {
 }
 
 vector<uint64_t> walker::nonref_pos(const SeqLib::BamRecord& record) { // {{{
-   // lower 32 bits contain absolute reference position of mismatch
-   // high 32 bits contain: 
-   // - lower 16: position along the read of mismatch
-   // - upper 16: 2 bits for CIGAR op (as defined in sam.h), 14 bits for op. length
+   /* lower 32 bits contain absolute reference position of mismatch
+    * high 32 bits contain: 
+    * - lower 16: position along the read of mismatch
+    * - upper 16: 2 bits for CIGAR op (as defined in sam.h, with caveat for S),
+    *    14 bits for op. length. Note that CIGAR op "S" (soft clip) is 4 in sam.h,
+    *    but it is 3 here (to fit in 2 bits). Since we overload 3 with "N" (RNA-seq skip),
+    *    these ops must be distinguished based on their position in the read --
+    *    soft clips can only occur at the read beginnings/ends, whereas "N" can never
+    *    occur there.
+    */
    vector<uint64_t> output;
 
    // query reference over this read
@@ -86,7 +92,10 @@ vector<uint64_t> walker::nonref_pos(const SeqLib::BamRecord& record) { // {{{
 
 	 // this operator consumes bases of the ref and read, but we don't assess
 	 // their (mis)match status.
+	 // note that we denote "S" as 3, which deviates from definition in sam.h
+	 // (see above)
 	 case 'S' :
+	    output.push_back((record.PositionWithSClips() + refpos) | PACK_NRP_HI(3, c_f.Length(), readpos));
 	    readpos += c_f.Length();
 	    refpos += c_f.Length();
 
