@@ -1,5 +1,7 @@
 #include "walker.hpp"
 
+#include <assert.h>
+
 // lots of this code derived from rrBAM
 
 #define CLAMPH(x, high) (((x) > (high)) ? (high) : (x))
@@ -197,6 +199,13 @@ bool walker::set_output_file(const string& outfile) {
       this->outfile_name = outfile;
    }
 
+   return 1;
+}
+
+bool walker::close_output_file() {
+   assert(fileno(this->outfile) > 2); // should not be closing standard I/O streams
+   if(fclose(this->outfile)) return 0;
+   this->outfile = NULL;
    return 1;
 }
 

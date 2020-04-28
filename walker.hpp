@@ -98,6 +98,10 @@ class walker {
     */
    bool set_output_file(const string& outfile);
 
+   /** Close current output file. Does not reset this->outfile_name.
+    */
+   bool close_output_file();
+
    /* constructors */
    walker(const string& bam_in, const string& ref_fa);
    ~walker();
