@@ -113,6 +113,7 @@ class walker {
 
    // output file
    FILE* outfile = NULL;
+   string outfile_name;
 
    // total number of reads consumed (now, at previous query)
    uint64_t n_reads = 0, n_reads_last = 0;

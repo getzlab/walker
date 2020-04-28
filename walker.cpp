@@ -194,6 +194,7 @@ bool walker::set_output_file(const string& outfile) {
 	 fprintf(stderr, "Could not open output file for writing!\n");
 	 return 0;
       }
+      this->outfile_name = outfile;
    }
 
    return 1;
