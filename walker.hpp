@@ -122,6 +122,10 @@ class walker {
    // total number of reads consumed (now, at previous query)
    uint64_t n_reads = 0, n_reads_last = 0;
 
+   // total number of reads actually processed
+   // must be incremented by user in walker::walk()
+   uint64_t n_reads_proc = 0, n_reads_last_proc = 0;
+
    // timers (now, at previous query)
    chrono::steady_clock::time_point time_now, time_last;
 };

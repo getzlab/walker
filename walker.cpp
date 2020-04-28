@@ -180,10 +180,25 @@ void walker::print_status() {
    double RPS = ((double) (n_reads - n_reads_last)) /
                 chrono::duration_cast<chrono::duration<double>>(time_now - time_last).count();
    n_reads_last = n_reads;
+   double RPS_proc = ((double) (n_reads_proc - n_reads_last_proc)) /
+                chrono::duration_cast<chrono::duration<double>>(time_now - time_last).count();
+   n_reads_last_proc = n_reads_proc;
    time_last = chrono::steady_clock::now();
 
    // print status
-   fprintf(stderr, "%d:%d (%0.2f r/s)\n", cur_read.ChrID(), cur_read.Position(), RPS);
+   if(n_reads_proc > 0) fprintf(stderr,
+     "%d:%d (%0.2f, %0.2f r/s [tot., proc.])\n",
+     cur_read.ChrID(),
+     cur_read.Position(),
+     RPS,
+     RPS_proc
+   );
+   else fprintf(stderr,
+     "%d:%d (%0.2f r/s)\n",
+     cur_read.ChrID(),
+     cur_read.Position(),
+     RPS
+   );
 
    return;
 }
