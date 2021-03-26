@@ -152,9 +152,8 @@ void walker::walk(const SeqLib::GenomicRegion& region) {
 }
 
 void walker::walk(const SeqLib::GenomicRegionCollection<>& region_collection) {
-   for(const auto& gr : region_collection) {
-      walk(gr);
-   }
+   reader.SetMultipleRegions(region_collection);
+   walk();
 }
 
 // }}}
