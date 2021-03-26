@@ -103,7 +103,7 @@ class walker {
    bool close_output_file();
 
    /* constructors */
-   walker(const string& bam_in, const string& ref_fa);
+   walker(const string& bam_in, const string& ref_fa = "");
    ~walker();
 
    // members

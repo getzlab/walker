@@ -25,9 +25,11 @@ walker::walker(const string& bam_in, const string& ref_fa) {
    header = reader.Header();
 
    // load reference
-   if(!reference.LoadIndex(ref_fa)) {
-      fprintf(stderr, "Error in %s : couldn't load reference!\n", __func__);
-      exit(-1);
+   if(ref_fa != "") {
+      if(!reference.LoadIndex(ref_fa)) {
+	 fprintf(stderr, "Error in %s : couldn't load reference!\n", __func__);
+	 exit(-1);
+      }
    }
 }
 
