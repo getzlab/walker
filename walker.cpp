@@ -152,7 +152,10 @@ void walker::walk(const SeqLib::GenomicRegion& region) {
 }
 
 void walker::walk(const SeqLib::GenomicRegionCollection<>& region_collection) {
-   reader.SetMultipleRegions(region_collection);
+   if(!reader.SetMultipleRegions(region_collection)) {
+      fprintf(stderr, "Error setting multiple regions!\n");
+      exit(1);
+   }
    walk();
 }
 
