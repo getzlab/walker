@@ -142,6 +142,21 @@ void walker::walk() {
    }
 }
 
+void walker::walk(const SeqLib::GenomicRegion& region) {
+   if(!reader.SetRegion(region)) {
+      fprintf(stderr, "Error setting region!\n");
+      exit(1);
+   }
+
+   walker::walk();
+}
+
+void walker::walk(const SeqLib::GenomicRegionCollection<>& region_collection) {
+   for(const auto& gr : region_collection) {
+      walker::walk(gr);
+   }
+}
+
 // }}}
 
 void walker::increment_pos(uint16_t& curchr, uint32_t& curpos) {

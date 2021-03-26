@@ -63,13 +63,13 @@ class walker {
 
    // 1. we're interested in all positions
    virtual void walk(); // start-to-end
-   virtual void walk(SeqLib::GenomicRegion) { } // single region
-   virtual void walk(SeqLib::GenomicRegionCollection<>) { } // multiple region
+   virtual void walk(const SeqLib::GenomicRegion&); // single region
+   virtual void walk(const SeqLib::GenomicRegionCollection<>&); // multiple region
 
    // 2. we're only interested in positions intersecting a position list
    virtual void walk(uint8_t*) { } // start-to-end
-   virtual void walk(SeqLib::GenomicRegion, uint8_t*) { } // single region
-   virtual void walk(SeqLib::GenomicRegionCollection<>, uint8_t*) { } // multiple region
+   virtual void walk(const SeqLib::GenomicRegion&, uint8_t*) { } // single region
+   virtual void walk(const SeqLib::GenomicRegionCollection<>&, uint8_t*) { } // multiple region
 
    /** Function to apply to each read in iterator
     *  @return Return false if iterator should break; true otherwise
