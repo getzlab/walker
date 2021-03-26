@@ -148,12 +148,12 @@ void walker::walk(const SeqLib::GenomicRegion& region) {
       exit(1);
    }
 
-   walker::walk();
+   walk();
 }
 
 void walker::walk(const SeqLib::GenomicRegionCollection<>& region_collection) {
    for(const auto& gr : region_collection) {
-      walker::walk(gr);
+      walk(gr);
    }
 }
 
