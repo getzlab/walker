@@ -206,15 +206,15 @@ void walker::print_status() {
 
    // print status
    if(n_reads_proc > 0) fprintf(stderr,
-     "%d:%d (%0.2f, %0.2f r/s [tot., proc.])\n",
-     cur_read.ChrID(),
+     "%s:%d (%0.2f, %0.2f r/s [tot., proc.])\n",
+     header.IDtoName(cur_read.ChrID()).c_str(),
      cur_read.Position(),
      RPS,
      RPS_proc
    );
    else fprintf(stderr,
-     "%d:%d (%0.2f r/s)\n",
-     cur_read.ChrID(),
+     "%s:%d (%0.2f r/s)\n",
+     header.IDtoName(cur_read.ChrID()).c_str(),
      cur_read.Position(),
      RPS
    );
