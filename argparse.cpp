@@ -19,7 +19,8 @@ bool basic_argparse(int argc, char** argv, basic_arg_t* args) {
    };
 
    char arg;
-   while((arg = getopt(argc, argv, "b:o:i:r:")) != -1) {
+   opterr = 0;
+   while((arg = getopt(argc, argv, "-b:o:i:r:")) != -1) {
       switch(arg) {
 	 case 'b' : // path to BAM
 	    args_ph.bam_in = string(optarg);
@@ -50,8 +51,8 @@ bool basic_argparse(int argc, char** argv, basic_arg_t* args) {
 		  break;
 
 	       cerr << missing + " cannot be blank!\n";
+	       return false;
 	    }
-	    return false;
       }
    }
 
