@@ -86,7 +86,7 @@ vector<uint64_t> walker::nonref_pos(const SeqLib::BamRecord& record) { // {{{
 	               always iterating over all 8 bytes
 	     */
 	    for(int i = 0; i < c_f.Length(); i++) {
-	       if(ror[refpos] != readseq[readpos]) {
+	       if(pack_2bit[ror[refpos]] != pack_2bit[readseq[readpos]]) {
 		  output.push_back((record.PositionWithSClips() + refpos) | PACK_NRP_HI(0, 1, readpos));
 	       }
 	       readpos++;
@@ -95,7 +95,7 @@ vector<uint64_t> walker::nonref_pos(const SeqLib::BamRecord& record) { // {{{
 	    break;
 
 	 // this operator consumes bases of the ref and read, but we don't assess
-	 // their (mis)match status.
+	 // their (mis)match status; we just add them to the vector.
 	 // note that we denote "S" as 3, which deviates from definition in sam.h
 	 // (see above)
 	 case 'S' :
