@@ -42,6 +42,13 @@ static const uint8_t nyb_to_2bit[16] = {4, 0, 1, 4,   /* A C */
 					3, 4, 4, 4,   /* T */
 					4, 4, 4, 4};  /* N */
 
+typedef struct nonref_pos_t {
+   uint32_t refpos;
+   uint16_t readpos;
+   uint16_t jointpos;
+   uint16_t cig;
+} nonref_pos_t;
+
 class walker {
    public:
    /** Check if read has edit distance zero (excluding clipped bases)
@@ -57,7 +64,7 @@ class walker {
      *           - upper 16: 2 bits for CIGAR op (as defined in sam.h), 14 bits
      *             for op. length (clamped at 2^14 = 16384)
     */
-   virtual vector<uint64_t> nonref_pos(const SeqLib::BamRecord& record);
+   virtual vector<nonref_pos_t> nonref_pos(const SeqLib::BamRecord& record);
 
    /* iterators */
 

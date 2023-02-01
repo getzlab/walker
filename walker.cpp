@@ -6,9 +6,7 @@
 
 #define CLAMPH(x, high) (((x) > (high)) ? (high) : (x))
 
-// pack high 32 bits of nonref_pos output
-#define PACK_NRP_HI(type, length, readpos) ((uint64_t) (((((type) << 14) \
-| (CLAMPH((length), 0x3FFF) & 0x3FFF)) << 16) | ((CLAMPH(readpos, 0xFFFF)) & 0xFFFF)) << 32)
+#define PACK_CIG(type, length) (((type) << 14) | (CLAMPH((length), 0x3FFF) & 0x3FFF))
 
 using namespace std;
 
@@ -42,10 +40,10 @@ bool walker::EDz(const SeqLib::BamRecord& record) {
    return record.GetIntTag("NM", nm) ? nm == 0 : true;
 }
 
-vector<uint64_t> walker::nonref_pos(const SeqLib::BamRecord& record) { // {{{
+vector<nonref_pos_t> walker::nonref_pos(const SeqLib::BamRecord& record) { // {{{
    /* lower 32 bits contain absolute reference position of mismatch
     * high 32 bits contain: 
-    * - lower 16: position along the read of mismatch
+    * - lower 16: position along the 
     * - upper 16: 2 bits for CIGAR op (as defined in sam.h, with caveat for S),
     *    14 bits for op. length. Note that CIGAR op "S" (soft clip) is 4 in sam.h,
     *    but it is 3 here (to fit in 2 bits). Since we overload 3 with "N" (RNA-seq skip),
@@ -53,7 +51,7 @@ vector<uint64_t> walker::nonref_pos(const SeqLib::BamRecord& record) { // {{{
     *    soft clips can only occur at the read beginnings/ends, whereas "N" can never
     *    occur there.
     */
-   vector<uint64_t> output;
+   vector<nonref_pos_t> output;
 
    // query reference over this read
 
@@ -71,6 +69,14 @@ vector<uint64_t> walker::nonref_pos(const SeqLib::BamRecord& record) { // {{{
 
    int readpos = 0;
    int refpos = 0;
+   int jointpos = 0; // position over joint read/ref alignment, e.g.
+   /*
+      0    4    8
+      ACGTACGTA--CGT REF
+      ACGCAC--ACCCGT READ
+         ^  ^^ ^^
+         3  56 78
+    */
    for(auto c_f : c) {
       switch(c_f.Type()) {
 	 /* this operator consumes bases over the ref and read
@@ -87,10 +93,16 @@ vector<uint64_t> walker::nonref_pos(const SeqLib::BamRecord& record) { // {{{
 	     */
 	    for(int i = 0; i < c_f.Length(); i++) {
 	       if(pack_2bit[ror[refpos]] != pack_2bit[readseq[readpos]]) {
-		  output.push_back((record.PositionWithSClips() + refpos) | PACK_NRP_HI(0, 1, readpos));
+		  output.push_back({
+		    .refpos = record.PositionWithSClips() + refpos,
+		    .readpos = CLAMPH(readpos, 0xFFFF) & 0xFFFF,
+		    .jointpos = CLAMPH(jointpos, 0xFFFF) & 0xFFFF,
+		    .cig = PACK_CIG(0, 1)
+		  });
 	       }
 	       readpos++;
 	       refpos++;
+	       jointpos++;
 	    }
 	    break;
 
@@ -99,24 +111,42 @@ vector<uint64_t> walker::nonref_pos(const SeqLib::BamRecord& record) { // {{{
 	 // note that we denote "S" as 3, which deviates from definition in sam.h
 	 // (see above)
 	 case 'S' :
-	    output.push_back((record.PositionWithSClips() + refpos) | PACK_NRP_HI(3, c_f.Length(), readpos));
+	    output.push_back({
+	      .refpos = record.PositionWithSClips() + refpos,
+	      .readpos = CLAMPH(readpos, 0xFFFF) & 0xFFFF,
+	      .jointpos = CLAMPH(jointpos, 0xFFFF) & 0xFFFF,
+	      .cig = PACK_CIG(3, c_f.Length())
+	    });
 	    readpos += c_f.Length();
 	    refpos += c_f.Length();
+	    jointpos += c_f.Length();
 
 	    break;
 
 	 // these operators consume bases over the ref but not the read
 	 case 'D' :
 	 case 'N' : 
-	    output.push_back((record.PositionWithSClips() + refpos) | PACK_NRP_HI(c_f.RawType(), c_f.Length(), readpos));
+	    output.push_back({
+	      .refpos = record.PositionWithSClips() + refpos,
+	      .readpos = CLAMPH(readpos, 0xFFFF) & 0xFFFF,
+	      .jointpos = CLAMPH(jointpos, 0xFFFF) & 0xFFFF,
+	      .cig = PACK_CIG(c_f.RawType(), c_f.Length())
+	    });
 	    refpos += c_f.Length();
+	    jointpos += c_f.Length();
 
 	    break;
 
 	 // this operator consumes bases over the read but not the ref
 	 case 'I' :
-	    output.push_back((record.PositionWithSClips() + refpos) | PACK_NRP_HI(c_f.RawType(), c_f.Length(), readpos));
+	    output.push_back({
+	      .refpos = record.PositionWithSClips() + refpos,
+	      .readpos = CLAMPH(readpos, 0xFFFF) & 0xFFFF,
+	      .jointpos = CLAMPH(jointpos, 0xFFFF) & 0xFFFF,
+	      .cig = PACK_CIG(c_f.RawType(), c_f.Length())
+	    });
 	    readpos += c_f.Length();
+	    jointpos += c_f.Length();
 
 	    break;
       }
