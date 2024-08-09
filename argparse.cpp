@@ -22,37 +22,37 @@ bool basic_argparse(int argc, char** argv, basic_arg_t* args) {
    opterr = 0;
    while((arg = getopt(argc, argv, "-b:o:i:r:")) != -1) {
       switch(arg) {
-	 case 'b' : // path to BAM
-	    args_ph.bam_in = string(optarg);
-	    break;
-	 case 'o' : // output filename
-	    args_ph.output_file = string(optarg);
-	    break;
-	 case 'i' : // input sites list
-	    args_ph.input_file = string(optarg);
-	    break;
-	 case 'r' : // path to reference
-	    args_ph.ref_fa = string(optarg);
-	    break;
-	 case '?' :
-	    string missing;
-	    switch(optopt) {
-	       case 'b' :
-		  missing = "Path to BAM";
-		  break;
-	       case 'o' :
-		  missing = "Output filename";
-		  break;
-	       case 'i' :
-		  missing = "Input filename";
-		  break;
-	       case 'r' :
-		  missing = "Path to reference";
-		  break;
+         case 'b' : // path to BAM
+            args_ph.bam_in = string(optarg);
+            break;
+         case 'o' : // output filename
+            args_ph.output_file = string(optarg);
+            break;
+         case 'i' : // input sites list
+            args_ph.input_file = string(optarg);
+            break;
+         case 'r' : // path to reference
+            args_ph.ref_fa = string(optarg);
+            break;
+         case '?' :
+            string missing;
+            switch(optopt) {
+               case 'b' :
+                  missing = "Path to BAM";
+                  break;
+               case 'o' :
+                  missing = "Output filename";
+                  break;
+               case 'i' :
+                  missing = "Input filename";
+                  break;
+               case 'r' :
+                  missing = "Path to reference";
+                  break;
 
-	       cerr << missing + " cannot be blank!\n";
-	       return false;
-	    }
+             cerr << missing + " cannot be blank!\n";
+             return false;
+          }
       }
    }
 
@@ -74,8 +74,8 @@ bool basic_argparse_validate(basic_arg_t* args) {
    // check that reference FASTA is present and a regular file
    struct stat sb;
    if(stat(args->ref_fa.c_str(), &sb) == -1 || !S_ISREG(sb.st_mode)) {
-	 cerr << "Error: invalid reference FASTA!\n";
-	 return false;
+      cerr << "Error: invalid reference FASTA!\n";
+      return false;
    }
 
    return true;

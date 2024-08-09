@@ -38,9 +38,9 @@ static const uint8_t pack_2bit[256] = {
 // convert 4 bit (nybble) representation of base in read to 2 bit (assumes we
 // don't care about N's in reads)
 static const uint8_t nyb_to_2bit[16] = {4, 0, 1, 4,   /* A C */
-					2, 4, 4, 4,   /* G */
-					3, 4, 4, 4,   /* T */
-					4, 4, 4, 4};  /* N */
+                                        2, 4, 4, 4,   /* G */
+                                        3, 4, 4, 4,   /* T */
+                                        4, 4, 4, 4};  /* N */
 
 typedef struct nonref_pos_t {
    uint32_t refpos;
