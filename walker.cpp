@@ -25,8 +25,8 @@ walker::walker(const string& bam_in, const string& ref_fa) {
    // load reference
    if(ref_fa != "") {
       if(!reference.LoadIndex(ref_fa)) {
-         fprintf(stderr, "Error in %s : couldn't load reference!\n", __func__);
-         exit(-1);
+	 fprintf(stderr, "Error in %s : couldn't load reference!\n", __func__);
+	 exit(-1);
       }
    }
 }
@@ -79,76 +79,76 @@ vector<nonref_pos_t> walker::nonref_pos(const SeqLib::BamRecord& record) { // {{
     */
    for(auto c_f : c) {
       switch(c_f.Type()) {
-    /* this operator consumes bases over the ref and read
-     */
-    case 'M' :
-       /*   IDEA: since we expect the set of mismatches to be sparse,
-                  rather than comparing each byte at a time, can we 
-                  cast pointer to int64, bitwise xor read and reference,
-                  and compare 8 bytes at a time?
-                  
-                  could potentially be even faster if we do a binary search
-                  for nonzero xor'd bits through the int64, rather than 
-                  always iterating over all 8 bytes
-        */
-       for(int i = 0; i < c_f.Length(); i++) {
-          if(pack_2bit[ror[refpos]] != pack_2bit[readseq[readpos]]) {
-        output.push_back({
-          .refpos = record.PositionWithSClips() + refpos,
-          .readpos = CLAMPH(readpos, 0xFFFF) & 0xFFFF,
-          .jointpos = CLAMPH(jointpos, 0xFFFF) & 0xFFFF,
-          .cig = PACK_CIG(0, 1)
-        });
-          }
-          readpos++;
-          refpos++;
-          jointpos++;
-       }
-       break;
+	 /* this operator consumes bases over the ref and read
+	  */
+	 case 'M' :
+	    /*   IDEA: since we expect the set of mismatches to be sparse,
+	               rather than comparing each byte at a time, can we 
+	               cast pointer to int64, bitwise xor read and reference,
+	               and compare 8 bytes at a time?
+	               
+	               could potentially be even faster if we do a binary search
+	               for nonzero xor'd bits through the int64, rather than 
+	               always iterating over all 8 bytes
+	     */
+	    for(int i = 0; i < c_f.Length(); i++) {
+	       if(pack_2bit[ror[refpos]] != pack_2bit[readseq[readpos]]) {
+		  output.push_back({
+		    .refpos = record.PositionWithSClips() + refpos,
+		    .readpos = CLAMPH(readpos, 0xFFFF) & 0xFFFF,
+		    .jointpos = CLAMPH(jointpos, 0xFFFF) & 0xFFFF,
+		    .cig = PACK_CIG(0, 1)
+		  });
+	       }
+	       readpos++;
+	       refpos++;
+	       jointpos++;
+	    }
+	    break;
 
-    // this operator consumes bases of the ref and read, but we don't assess
-    // their (mis)match status; we just add them to the vector.
-    // note that we denote "S" as 3, which deviates from definition in sam.h
-    // (see above)
-    case 'S' :
-       output.push_back({
-         .refpos = record.PositionWithSClips() + refpos,
-         .readpos = CLAMPH(readpos, 0xFFFF) & 0xFFFF,
-         .jointpos = CLAMPH(jointpos, 0xFFFF) & 0xFFFF,
-         .cig = PACK_CIG(3, c_f.Length())
-       });
-       readpos += c_f.Length();
-       refpos += c_f.Length();
-       jointpos += c_f.Length();
+	 // this operator consumes bases of the ref and read, but we don't assess
+	 // their (mis)match status; we just add them to the vector.
+	 // note that we denote "S" as 3, which deviates from definition in sam.h
+	 // (see above)
+	 case 'S' :
+	    output.push_back({
+	      .refpos = record.PositionWithSClips() + refpos,
+	      .readpos = CLAMPH(readpos, 0xFFFF) & 0xFFFF,
+	      .jointpos = CLAMPH(jointpos, 0xFFFF) & 0xFFFF,
+	      .cig = PACK_CIG(3, c_f.Length())
+	    });
+	    readpos += c_f.Length();
+	    refpos += c_f.Length();
+	    jointpos += c_f.Length();
 
-       break;
+	    break;
 
-    // these operators consume bases over the ref but not the read
-    case 'D' :
-    case 'N' : 
-       output.push_back({
-         .refpos = record.PositionWithSClips() + refpos,
-         .readpos = CLAMPH(readpos, 0xFFFF) & 0xFFFF,
-         .jointpos = CLAMPH(jointpos, 0xFFFF) & 0xFFFF,
-         .cig = PACK_CIG(c_f.RawType(), c_f.Length())
-       });
-       refpos += c_f.Length();
-       jointpos += c_f.Length();
+	 // these operators consume bases over the ref but not the read
+	 case 'D' :
+	 case 'N' : 
+	    output.push_back({
+	      .refpos = record.PositionWithSClips() + refpos,
+	      .readpos = CLAMPH(readpos, 0xFFFF) & 0xFFFF,
+	      .jointpos = CLAMPH(jointpos, 0xFFFF) & 0xFFFF,
+	      .cig = PACK_CIG(c_f.RawType(), c_f.Length())
+	    });
+	    refpos += c_f.Length();
+	    jointpos += c_f.Length();
 
-       break;
+	    break;
 
-    // this operator consumes bases over the read but not the ref
-    case 'I' :
-       output.push_back({
-         .refpos = record.PositionWithSClips() + refpos,
-         .readpos = CLAMPH(readpos, 0xFFFF) & 0xFFFF,
-         .jointpos = CLAMPH(jointpos, 0xFFFF) & 0xFFFF,
-         .cig = PACK_CIG(c_f.RawType(), c_f.Length())
-       });
-       readpos += c_f.Length();
-       jointpos += c_f.Length();
+	 // this operator consumes bases over the read but not the ref
+	 case 'I' :
+	    output.push_back({
+	      .refpos = record.PositionWithSClips() + refpos,
+	      .readpos = CLAMPH(readpos, 0xFFFF) & 0xFFFF,
+	      .jointpos = CLAMPH(jointpos, 0xFFFF) & 0xFFFF,
+	      .cig = PACK_CIG(c_f.RawType(), c_f.Length())
+	    });
+	    readpos += c_f.Length();
+	    jointpos += c_f.Length();
 
-       break;
+	    break;
       }
    }
 
@@ -257,8 +257,8 @@ bool walker::set_output_file(const string& outfile) {
    else {
       this->outfile = fopen(outfile.c_str(), "w");
       if(!this->outfile) {
-         fprintf(stderr, "Could not open output file for writing!\n");
-         return 0;
+	 fprintf(stderr, "Could not open output file for writing!\n");
+	 return 0;
       }
       this->outfile_name = outfile;
    }
