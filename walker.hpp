@@ -111,6 +111,7 @@ class walker {
 
    /* constructors */
    walker(const string& bam_in, const string& ref_fa = "");
+   walker() {};
    ~walker();
 
    // members
