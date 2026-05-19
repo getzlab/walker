@@ -235,19 +235,22 @@ void walker::print_status() {
    time_last = chrono::steady_clock::now();
 
    // print status
-   if(n_reads_proc > 0) fprintf(stderr,
-     "%s:%d (%0.2f, %0.2f r/s [tot., proc.])\n",
-     header.IDtoName(cur_read.ChrID()).c_str(),
-     cur_read.Position(),
-     RPS,
-     RPS_proc
-   );
-   else fprintf(stderr,
-     "%s:%d (%0.2f r/s)\n",
-     header.IDtoName(cur_read.ChrID()).c_str(),
-     cur_read.Position(),
-     RPS
-   );
+   if (cur_read.ChrID() != -1) {
+      if (n_reads_proc > 0)
+         fprintf(stderr, "%s:%d (%0.2f, %0.2f r/s [tot., proc.])\n",
+               header.IDtoName(cur_read.ChrID()).c_str(), cur_read.Position(),
+               RPS, RPS_proc);
+      else
+         fprintf(stderr, "%s:%d (%0.2f r/s)\n",
+               header.IDtoName(cur_read.ChrID()).c_str(), cur_read.Position(),
+               RPS);
+   } else {
+      if (n_reads_proc > 0)
+         fprintf(stderr, "???:%d (%0.2f, %0.2f r/s [tot., proc.])\n",
+               cur_read.Position(), RPS, RPS_proc);
+      else
+         fprintf(stderr, "???:%d (%0.2f r/s)\n", cur_read.Position(), RPS);
+   }
 
    return;
 }
